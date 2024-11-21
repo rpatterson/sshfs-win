@@ -198,10 +198,21 @@ $ sh "$(cat /proc/registry32/HKEY_LOCAL_MACHINE/SOFTWARE/WinFsp/InstallDir | tr 
 FUSE for Cygwin installed.
 ```
 
+## Passing options to sshfs for mapped network drives
+
+When using mapped network drives created in Windows Explorer or using "net use", you can't directly pass options to sshfs. You can, however, pass them via a registry patch. When you then map a network drive or use "net use", the options are automatically passed in the background. Registry patches for common issues below are provided and serve as an example.
+
 ## Preventing timeouts
 
-A connection will timeout after some minutes when nothing is transferred. To prevent this, pass e.g. "-o ServerAliveInterval=30" as SSHFS_OPTIONS.
-When using "net use", you can't directly pass parameters, but you can use the provided "ServerAliveInterval.reg" to execute a registry patch. When you then use "net use", the parameter is automatically passed in the background and a keep-alive request is sent every 30 seconds.
+A connection will timeout after some minutes when nothing is transferred. To prevent this, pass e.g. "-o ServerAliveInterval=30" as SSHFS_OPTIONS. A keep-alive request is sent every 30 seconds.
+
+Map network drive or "net use": Use the provided "ServerAliveInterval.reg" registry patch.
+
+## Setting looser permissions for new files and directories
+
+On a shared file server, the default permissions for new files created may be too strict and prevent others from reading and writing them. To set looser permissions, pass e.g. "-o create_file_umask=0117,create_dir_umask=0007" as SSHFS_OPTIONS. This will allow owner/group read and write permissions on new files and owner/group read, write and execute permissions on new directories.
+
+Map network drive or "net use": Use the provided "GroupReadWrite.reg" registry patch.
 
 ## Project Organization
 
